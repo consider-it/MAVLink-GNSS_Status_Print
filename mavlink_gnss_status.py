@@ -6,6 +6,7 @@ Display the GPS_STATUS messages of all connected systems in a nice way.
 
 Author:    Jannik Beyerstedt <beyerstedt@consider-it.de>
 Copyright: (c) consider it GmbH, 2021
+License:   MIT
 """
 
 import argparse
@@ -72,6 +73,7 @@ if __name__ == "__main__":
     while True:
         msg = mav.recv_match(type='GPS_STATUS', blocking=True)
         logger.debug("Message from %d/%d: %s", msg.get_srcSystem(), msg.get_srcComponent(), msg)
+        sys.exit(0)
 
         # just evaluate messages from specific system, if requested
         if args.sysID is not None and msg.get_srcSystem() != args.sysID:
@@ -130,7 +132,7 @@ if __name__ == "__main__":
                 logger.debug("Sat convert: %3d->%4s, SNR %2d, used %d, elev %3d, azim %3d",
                              sat_prn, sat_prn_str, sat_snr, sat_used, sat_elev, sat_azim)
 
-        print("MAVLink sysid %d:" % (msg.get_srcSystem()))
+        print("MAVLink sysid %d: seq %d" % (msg.get_srcSystem(), msg.get_seq()))
         for gnss_system, satellites in satinfos.items():
             sat_list_str = "    " + gnss_system + ": "
             if satellites:
@@ -139,3 +141,5 @@ if __name__ == "__main__":
                 print(sat_list_str[:-2])
             # else:
             #     print(sat_list_str)
+
+        sys.exit(0)
